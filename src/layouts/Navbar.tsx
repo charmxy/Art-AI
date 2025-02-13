@@ -1,11 +1,11 @@
 import React, { type FC, useEffect, useState } from "react";
-import { Button, Modal, Form, Input } from "antd";
+import { Button, Modal, Form, Input, Dropdown } from "antd";
 import type { FormProps } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useUserStore } from "@/store";
 import { loign, register } from "@/api";
-
-type FieldType = {
+import type { MenuProps } from 'antd';
+ type FieldType = {
   username?: string;
   password?: string;
 };
@@ -29,16 +29,23 @@ const Navbar: FC = () => {
     setOpen(false);
   };
 
+  const loginOut = ()=>{
+    setUserState({})
+    localStorage.removeItem("access_token");
+  }
+
+  const items: MenuProps['items'] = [
+    {
+      label: (
+        <a onClick={loginOut}>
+          退出登录
+        </a>
+      ),
+      key: '0',
+    }]
   const onFinish: FormProps<FieldType>["onFinish"] = async values => {
     const { username, password } = values;
-    const data =
-      actionType === "login"
-        ? await loign({
-            username: username,
-            auth_type: "password",
-            credential: password
-          })
-        : await register({ username: username, pwd: password });
+   
     if (actionType === "login") {
       const data = await loign({
         username: username,
@@ -51,7 +58,6 @@ const Navbar: FC = () => {
     } else {
       await register({ username: username, pwd: password });
     }
-    console.log("Success:", values, data.data.token);
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = errorInfo => {
@@ -81,9 +87,13 @@ const Navbar: FC = () => {
         <div className="flex flex-row items-center gap-[16px]">
           <div className="flex justify-start items-center gap-[4px]">
             {userState?.username ? (
-              <span className="text-[18px] font-[500] leading-[32px] text-[#FFFFFF]">
-                {userState?.username}
-              </span>
+              <Dropdown menu={{ items }}>
+              <a onClick={(e) => e.preventDefault()} >
+                <span className="text-[18px] font-[500] leading-[32px] text-[#FFFFFF] cursor-pointer">
+                  {userState?.username}
+                </span>
+              </a>
+            </Dropdown>
             ) : (
               <Button size="large" onClick={onLogin}>
                 登录

@@ -42,7 +42,8 @@ export const getTaskVideo = params => {
   return request({
     url: `/api/task/video`,
     method: "get",
-    params
+    params,
+    responseType: "blob" // 确保返回的是二进制数据
   });
 };
 
@@ -52,6 +53,5 @@ export const uploadFile = data => {
     method: "post",
     data,
     isBlob: true,
-    responseType: "arraybuffer" // 确保返回的是二进制数据
   });
 };
