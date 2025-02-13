@@ -5,7 +5,8 @@ import {
   taskPrompt,
   getTaskQueue,
   getTaskStatus,
-  getTaskVideo
+  getTaskVideo,
+  getTaskQueueGroup
 } from "@/api";
 import type { CheckboxGroupProps } from "antd/es/checkbox";
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -21,6 +22,10 @@ const Task: FC = () => {
   const [size, setSize] = React.useState<string>("");
   const [lora, setLora] = React.useState<string>("");
   const [list, setList] = useState([]);
+  const [queueList, setQueueList] = useState([]);
+  const [userQueueList, setUserQueueList] = useState([]);
+  const [vipQueueList, setVipQueueList] = useState([]);
+
   const [videoUrl, setVideoUrl] = useState("");
   const [stepsCount, setStepsCount] = React.useState<number>(25);
   const options: CheckboxGroupProps<string>["options"] = [
@@ -101,13 +106,14 @@ console.log(label)
       lora: lora,
       steps: stepsCount
     });
-     
-    console.log(res);
   };
 
   const taskQueue = async () => {
-    const res = await getTaskQueue();
-    console.log(res);
+    const queue = await getTaskQueueGroup();
+
+  //   const [userQueueList, setUserQueueList] = useState([]);
+  // const [vipQueueList, setVipQueueList] = useState([]);
+    setQueueList([...queue.data.data])
   };
 
   const taskStatus = async () => {
@@ -156,29 +162,44 @@ console.log(label)
         className="w-full grid grid-cols-5 gap-[20px] h-[75vh] px-[20px]"
       >
         <div className="w-full flex flex-col items-cemter gap-[40px] border-[#e5e7eb] border-2 border-solid py-[24px] px-[20px]">
+          <div className="w-full flex-col items-start gap-[30px]">
+            <div className="w-full flex justify-between items-center">
+              <div className="text-[16px] font-[800] leading-[32px]">队列列表</div>
+              <Button
+                color="purple"
+                variant="solid"
+                onClick={taskQueue}
+              >
+                加载队列
+              </Button>
+            </div>
+            <List
+              className="h-[25vh] overflow-y-auto"
+              dataSource={queueList}
+              renderItem={(item) => (
+                <List.Item key={item.task_id}>
+                  <div  className="w-full flex flex-col gap-[10px] px-[8px] py-[10px] bg-[#dae1e8] rounded-lg transition-all duration-500 hover:bg-[#ff8c19] cursor-pointer">
+                    <div>{`任务ID：${item.task_id}`}</div>
+                    <div>{`用户：${item.client_id}`} {item.user_type == 0 ? (<span>普通</span>):(<span className="text-[#ff4d4f]">VIP</span>)}</div>
+                    <div>{`模型：${new Function("return " + item.inputs)()?.model_name}`}</div>
+                    <div>{`开始时间：${item.start_time}`}</div>
+                    <div>{`结束时间：${item.end_time}`}</div>
+                  </div>
+                </List.Item>
+              )}
+            />
+          </div> 
           <div className="w-full flex-col items-start gap-[30px] ">
-            <div className="text-[16px] font-[800] leading-[32px]">任务</div>
-          </div>
-          <Button
-            color="purple"
-            variant="solid"
-            className="w-full"
-            onClick={taskQueue}
-          >
-            查看队列
-          </Button>
-          <Button
-            color="purple"
-            variant="solid"
-            className="w-full"
-            onClick={taskStatus}
-          >
-            查看执行状态
-          </Button>
-          <div className="w-full flex-col items-start gap-[30px] ">
-            <div className="text-[16px] font-[800] leading-[32px]">
-              任务列表
-            </div> 
+            <div className="w-full flex justify-between items-center">
+              <div className="text-[16px] font-[800] leading-[32px]">任务列表</div>
+              <Button
+                color="purple"
+                variant="solid"
+                onClick={taskStatus}
+              >
+                加载任务
+              </Button>
+            </div>
             <List
               className="h-[50vh] overflow-y-auto"
               dataSource={list}

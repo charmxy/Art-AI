@@ -31,6 +31,13 @@ export const getTaskQueue = () => {
   });
 };
 
+export const getTaskQueueGroup = () => {
+  return request({
+    url: `/api/task/queue/group`,
+    method: "get"
+  });
+};
+
 export const getTaskStatus = () => {
   return request({
     url: `/api/task/status`,

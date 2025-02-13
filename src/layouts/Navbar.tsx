@@ -52,7 +52,7 @@ const Navbar: FC = () => {
         auth_type: "password",
         credential: password
       });
-      setUserState({ username: username, token: data.data.token });
+      setUserState({ username: username, token: data.data.token,userType: data.data.user_type });
       localStorage.setItem("access_token", data.data.token);
       onClose();
     } else {
@@ -90,7 +90,7 @@ const Navbar: FC = () => {
               <Dropdown menu={{ items }}>
               <a onClick={(e) => e.preventDefault()} >
                 <span className="text-[18px] font-[500] leading-[32px] text-[#FFFFFF] cursor-pointer">
-                  {userState?.username}
+                  {`${userState?.username}（${userState?.userType == 1 ? "VIP" : "普通"}）`}
                 </span>
               </a>
             </Dropdown>
