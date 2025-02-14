@@ -38,7 +38,6 @@ export const request = (config: AxiosRequestConfig<any>) => {
   const token = localStorage.getItem("access_token");
   if (!headers["Authorization"]) headers["Authorization"] = `Basic ${token}`;
   config["headers"] = headers;
-  console.log(config)
 
   return instance(config)
     .then(res => {

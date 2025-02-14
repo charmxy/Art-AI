@@ -3,7 +3,7 @@ interface UserStore {
   userState: {};
   setUserState: (payload: UserStore) => any;
   clearUserState: () => void;
-} 
+}
 
 export const useUserStore = create<any>(set => ({
   // 默认为游客
